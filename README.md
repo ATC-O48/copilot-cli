@@ -384,7 +384,7 @@ Run `/feedback` from within the CLI to submit a confidential feedback survey.
 
 ## License
 
-This project is licensed under the [Command Code License](LICENSE.md).
+This project is licensed under the [GitHub Copilot CLI License](LICENSE.md).
 
 ---
 
