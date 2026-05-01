@@ -310,6 +310,26 @@ cat issue.md | cmd --headless
 
 ## CLI Reference
 
+### `devin` entry point
+
+```sh
+devin                            # Start interactive REPL (no prompt)
+devin -- your prompt here        # Start REPL with initial prompt
+devin -p "prompt"                # Single-turn, no REPL: print response to stdout and exit
+devin -p -- prompt words here    # Same, using -- separator (still works)
+```
+
+| Flag | Description |
+|------|-------------|
+| `-p`, `--print` | Single-turn mode — print response and exit |
+| `-m`, `--model <name>` | Select model (`opus`, `sonnet`, `haiku`) |
+| `--headless` | Non-interactive mode for CI/CD and scripts |
+| `--plan` | Structured planning before code generation |
+| `-h`, `--help` | Show help message |
+| `-v`, `--version` | Show version |
+
+### `cmd` entry point
+
 ```
 Usage: cmd [options] [prompt]
 

@@ -1,0 +1,230 @@
+#!/usr/bin/env bash
+# devin — terminal AI coding assistant
+#
+# Usage:
+#   devin                            Start interactive REPL (no prompt)
+#   devin -- <prompt words>          Start REPL with initial prompt
+#   devin -p "prompt"                Single-turn: print response to stdout and exit
+#   devin -p -- <prompt words>       Single-turn using -- separator
+#
+# Options:
+#   -p, --print           Single-turn mode (no REPL)
+#   -m, --model <name>    Model to use (opus, sonnet, haiku)
+#   --headless            Run in non-interactive mode
+#   --plan                Enter plan mode
+#   -h, --help            Show this help message
+#   -v, --version         Show version
+#
+set -euo pipefail
+
+VERSION="1.0.36"
+PROGRAM_NAME="devin"
+
+# ── Helpers ──────────────────────────────────────────────────────────────────
+
+usage() {
+  cat <<EOF
+Usage:
+  $PROGRAM_NAME                            Start interactive REPL (no prompt)
+  $PROGRAM_NAME -- <prompt words>          Start REPL with initial prompt
+  $PROGRAM_NAME -p "prompt"                Single-turn: print response to stdout and exit
+  $PROGRAM_NAME -p -- <prompt words>       Single-turn using -- separator
+
+Options:
+  -p, --print           Single-turn mode (no REPL)
+  -m, --model <name>    Model to use (opus, sonnet, haiku)
+  --headless            Run in non-interactive mode
+  --plan                Enter plan mode
+  -h, --help            Show this help message
+  -v, --version         Show version
+EOF
+}
+
+die() { printf '%s: %s\n' "$PROGRAM_NAME" "$*" >&2; exit 1; }
+
+# ── Argument parsing ─────────────────────────────────────────────────────────
+
+MODE="repl"          # repl | print
+PROMPT=""
+MODEL=""
+HEADLESS=false
+PLAN=false
+
+parse_args() {
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -h|--help)
+        usage
+        exit 0
+        ;;
+      -v|--version)
+        printf '%s %s\n' "$PROGRAM_NAME" "$VERSION"
+        exit 0
+        ;;
+      -p|--print)
+        MODE="print"
+        shift
+        # If the next token is --, consume it and treat the rest as the prompt
+        if [ $# -gt 0 ] && [ "$1" = "--" ]; then
+          shift
+          PROMPT="$*"
+          return
+        fi
+        # Otherwise the next quoted arg (or remaining args) is the prompt
+        if [ $# -gt 0 ]; then
+          PROMPT="$*"
+          return
+        fi
+        die "option -p requires a prompt argument"
+        ;;
+      -m|--model)
+        shift
+        [ $# -gt 0 ] || die "option --model requires an argument"
+        MODEL="$1"
+        shift
+        ;;
+      --headless)
+        HEADLESS=true
+        shift
+        ;;
+      --plan)
+        PLAN=true
+        shift
+        ;;
+      --)
+        # Everything after bare -- becomes the initial REPL prompt
+        shift
+        PROMPT="$*"
+        return
+        ;;
+      -*)
+        die "unknown option: $1"
+        ;;
+      *)
+        # Bare positional words (no -- separator) treated as prompt
+        PROMPT="$*"
+        return
+        ;;
+    esac
+  done
+}
+
+parse_args "$@"
+
+# ── Resolve backend binary ───────────────────────────────────────────────────
+
+resolve_backend() {
+  # Prefer copilot binary next to this script, then on PATH
+  local script_dir
+  script_dir="$(cd "$(dirname "$0")" && pwd)"
+
+  if [ -x "$script_dir/copilot" ]; then
+    echo "$script_dir/copilot"
+  elif command -v copilot >/dev/null 2>&1; then
+    command -v copilot
+  else
+    return 1
+  fi
+}
+
+BACKEND="$(resolve_backend 2>/dev/null || true)"
+
+# ── Build command array ──────────────────────────────────────────────────────
+
+build_cmd() {
+  local -a cmd=()
+
+  if [ -n "$BACKEND" ]; then
+    cmd+=("$BACKEND")
+  else
+    # Fallback: run the built-in stub (no backend installed)
+    cmd+=("__builtin_stub")
+  fi
+
+  [ -n "$MODEL" ]      && cmd+=(--model "$MODEL")
+  [ "$HEADLESS" = true ] && cmd+=(--headless)
+  [ "$PLAN" = true ]    && cmd+=(--plan)
+
+  printf '%s\n' "${cmd[@]}"
+}
+
+# ── Built-in stub (used when no copilot backend is found) ────────────────────
+
+builtin_repl() {
+  local initial_prompt="$1"
+
+  printf '%s %s — interactive REPL\n' "$PROGRAM_NAME" "$VERSION"
+  printf 'Type /help for commands, Ctrl-D to exit.\n'
+
+  if [ -n "$initial_prompt" ]; then
+    printf '\n> %s\n' "$initial_prompt"
+    printf '[processing prompt...]\n\n'
+  fi
+
+  while true; do
+    printf '> '
+    if ! IFS= read -r line; then
+      printf '\n'
+      break
+    fi
+    case "$line" in
+      /exit|/quit)
+        break
+        ;;
+      /help)
+        cat <<HELP
+Slash commands:
+  /model          Switch the active model
+  /skills         List available skills
+  /taste          View or edit your taste profile
+  /help           Show this help
+  /exit           Exit the REPL
+HELP
+        ;;
+      "")
+        continue
+        ;;
+      *)
+        printf '[processing...]\n\n'
+        ;;
+    esac
+  done
+}
+
+builtin_print() {
+  local prompt="$1"
+  [ -n "$prompt" ] || die "print mode requires a prompt"
+  printf '[single-turn] %s\n' "$prompt"
+}
+
+# ── Dispatch ─────────────────────────────────────────────────────────────────
+
+if [ "$BACKEND" = "" ]; then
+  # No copilot backend — use the built-in stub
+  case "$MODE" in
+    repl)
+      builtin_repl "$PROMPT"
+      ;;
+    print)
+      builtin_print "$PROMPT"
+      ;;
+  esac
+  exit 0
+fi
+
+# Backend is available — delegate
+readarray -t CMD < <(build_cmd)
+
+case "$MODE" in
+  repl)
+    if [ -n "$PROMPT" ]; then
+      exec "${CMD[@]}" -- "$PROMPT"
+    else
+      exec "${CMD[@]}"
+    fi
+    ;;
+  print)
+    # Single-turn: capture output, print to stdout, exit
+    exec "${CMD[@]}" --headless "$PROMPT"
+    ;;
+esac
