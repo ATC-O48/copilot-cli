@@ -111,6 +111,9 @@ parse_args() {
 
 parse_args "$@"
 
+# Print mode implies headless
+[ "$MODE" = "print" ] && HEADLESS=true
+
 # ── Resolve backend binary ───────────────────────────────────────────────────
 
 resolve_backend() {
@@ -152,6 +155,7 @@ build_cmd() {
 
 builtin_repl() {
   local initial_prompt="$1"
+  local line
 
   printf '%s %s — interactive REPL\n' "$PROGRAM_NAME" "$VERSION"
   printf 'Type /help for commands, Ctrl-D to exit.\n'
@@ -225,6 +229,6 @@ case "$MODE" in
     ;;
   print)
     # Single-turn: capture output, print to stdout, exit
-    exec "${CMD[@]}" --headless "$PROMPT"
+    exec "${CMD[@]}" -- "$PROMPT"
     ;;
 esac
