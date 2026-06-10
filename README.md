@@ -1,182 +1,367 @@
-# GitHub Copilot CLI
+<div align="center">
 
-> The power of GitHub Copilot, now in your terminal. AI-powered coding assistance directly in your command line, enabling you to build, debug, and understand code through natural language conversations.
+# Command Code
 
----
+### The first frontier coding agent that both builds software and continuously learns your coding taste.
 
-## Table of Contents
-
-- [Description](#description)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+Ships full-stack projects, features, fixes bugs, writes tests, and refactors — all while learning how you write code.
 
 ---
 
-## Description
+**Install**
 
-GitHub Copilot CLI brings AI-powered coding assistance directly to your command line, powered by the same agentic harness as GitHub's Copilot coding agent. It provides intelligent assistance while staying deeply integrated with your GitHub workflow.
+```sh
+npm i -g command-code
+```
 
-See [the official documentation](https://docs.github.com/copilot/concepts/agents/about-copilot-cli) for more information.
+**Run**
 
-![Image of the splash screen for the Copilot CLI](https://github.com/user-attachments/assets/f40aa23d-09dd-499e-9457-1d57d3368887)
+```sh
+cd your-project && cmd
+```
 
-Key features:
+[Explore the quickstart guide &rarr;](#quickstart)
 
-- **Terminal-native development:** Work with Copilot coding agent directly in your command line -- no context switching required
-- **GitHub integration out of the box:** Access your repositories, issues, and pull requests using natural language, all authenticated with your existing GitHub account
-- **Agentic capabilities:** Build, edit, debug, and refactor code with an AI collaborator that can plan and execute complex tasks
-- **MCP-powered extensibility:** Ships with GitHub's MCP server by default and supports custom MCP servers to extend capabilities
-- **Full control:** Preview every action before execution -- nothing happens without your explicit approval
-- **Autopilot mode:** Encourages the agent to continue working until a task is completed (experimental)
-- **LSP support:** Language Server Protocol integration for enhanced code intelligence
+</div>
 
 ---
 
-## Installation
+## Take command of your code
 
-### Supported Platforms
+<table>
+<tr>
+<td align="center" width="33%">
 
-- **Linux**
-- **macOS**
-- **Windows**
+### Models
+**Opus, Sonnet, Haiku**
 
-### Prerequisites
+Claude frontier LLMs
 
-- (On Windows) **PowerShell** v6 or higher
-- An **active Copilot subscription**. See [Copilot plans](https://github.com/features/copilot/plans?ref_cta=Copilot+plans+signup&ref_loc=install-copilot-cli&ref_page=docs).
+</td>
+<td align="center" width="33%">
 
-### Install via Script (macOS and Linux)
+### Taste
+**`taste-1` meta neuro-symbolics**
 
-```sh
-curl -fsSL https://gh.io/copilot-install | bash
-```
+Learns how you code
 
-Or:
+</td>
+<td align="center" width="33%">
 
-```sh
-wget -qO- https://gh.io/copilot-install | bash
-```
+### Extend
+**CLI, Skills, MCP**
 
-Use `| sudo bash` to run as root and install to `/usr/local/bin`.
+Build on top of it
 
-Set `PREFIX` to install to `$PREFIX/bin/` directory. Defaults to `/usr/local` when run as root or `$HOME/.local` when run as a non-root user.
+</td>
+</tr>
+<tr>
+<td align="center" width="33%">
 
-Set `VERSION` to install a specific version:
+### Code
+**10x faster**
 
-```sh
-curl -fsSL https://gh.io/copilot-install | VERSION="v0.0.369" PREFIX="$HOME/custom" bash
-```
+Ship features fast
 
-### Install via Homebrew (macOS and Linux)
+</td>
+<td align="center" width="33%">
 
-```sh
-brew install copilot-cli
-# Or prerelease:
-brew install copilot-cli@prerelease
-```
+### Review
+**2x quicker**
 
-### Install via WinGet (Windows)
+Slash review time in half
 
-```sh
-winget install GitHub.Copilot
-# Or prerelease:
-winget install GitHub.Copilot.Prerelease
-```
+</td>
+<td align="center" width="33%">
 
-### Install via npm (macOS, Linux, and Windows)
+### Bugs
+**5x slashed**
 
-```sh
-npm install -g @github/copilot
-# Or prerelease:
-npm install -g @github/copilot@prerelease
-```
+Catch issues early
+
+</td>
+</tr>
+</table>
 
 ---
 
-## Usage
+## What you can do
 
-### Launching the CLI
+- **Build projects in anyone's taste** — match any coding style automatically
+- **Automate the tedious stuff** — repetitive tasks, boilerplate, scaffolding
+- **Review PRs in seconds** — get instant, contextual feedback
+- **Create commits and pull requests** — ship directly from the CLI
+- **Refactor without breaking things** — safe, taste-aware transformations
+- **Plan before you build** — structured reasoning before code generation
+- **Connect your tools with MCP** — extend with Model Context Protocol servers
+- **Customize with skills and taste** — tailor behavior to your workflow
+- **Write tests and docs** — generate comprehensive coverage and documentation
+- **Pipe, script, and automate** — composable CLI for any workflow
 
-```sh
-copilot
-```
-
-On first launch, you'll be greeted with an animated banner. If you'd like to see it again, launch with `--banner`.
-
-If you're not logged in to GitHub, use the `/login` slash command and follow the on-screen instructions to authenticate.
-
-#### Authenticate with a Personal Access Token (PAT)
-
-1. Visit https://github.com/settings/personal-access-tokens/new
-2. Under "Permissions," click "add permissions" and select "Copilot Requests"
-3. Generate your token
-4. Add the token to your environment via `GH_TOKEN` or `GITHUB_TOKEN` (in order of precedence)
-
-### Working with Copilot
-
-Launch `copilot` in a folder that contains code you want to work with.
-
-By default, `copilot` utilizes Claude Sonnet 4.5. Run the `/model` slash command to choose from other available models, including Claude Sonnet 4 and GPT-5.
-
-### Experimental Mode
-
-Activate experimental mode for access to new features still in development:
-
-```sh
-copilot --experimental
-```
-
-Or use the `/experimental` slash command from within the CLI. Once activated, the setting is persisted in your config.
-
-**Experimental features:**
-- **Autopilot mode:** Press `Shift+Tab` to cycle through modes. Encourages the agent to continue working until a task is completed.
-
-Each prompt submission reduces your monthly quota of premium requests by one. See [About premium requests](https://docs.github.com/copilot/managing-copilot/monitoring-usage-and-entitlements/about-premium-requests).
+[Explore common workflows and examples &rarr;](#common-workflows)
 
 ---
 
-## Configuration
+## How taste works
 
-### LSP Servers
+<table>
+<tr>
+<td width="33%">
 
-GitHub Copilot CLI supports Language Server Protocol (LSP) for enhanced code intelligence (go-to-definition, hover information, diagnostics).
+### Continuously Learning
 
-LSP servers are not bundled -- install them separately. For example, for TypeScript:
+Every accept, reject, and edit becomes a signal that shapes your taste profile.
+
+</td>
+<td width="33%">
+
+### Meta Neuro-Symbolic AI
+
+`taste-1` enforces the invisible logic of your choices and coding taste.
+
+</td>
+<td width="33%">
+
+### Share with your team
+
+Portable via `npx taste push/pull`. Rules decay. Taste compounds.
+
+</td>
+</tr>
+</table>
+
+[Explore how taste learns your style &rarr;](#taste)
+
+---
+
+## Explore the docs
+
+| Topic | Description |
+|-------|-------------|
+| **[Core Concepts](#core-concepts)** | Interactive, headless, and plan modes. |
+| **[Taste](#taste)** | Learns your coding style and applies it to every project automatically. |
+| **[Skills](#skills)** | Reusable slash commands to share. |
+| **[MCP](#mcp)** | Connect external tools and services via Model Context Protocol. |
+| **[Studio](#studio)** | Manage taste profiles, API keys, and team organizations. |
+| **[Troubleshooting](#troubleshooting)** | Common issues, FAQs, and errors. |
+
+---
+
+## Quickstart
+
+### 1. Install
 
 ```sh
-npm install -g typescript-language-server
+npm i -g command-code
 ```
 
-Configure LSP servers at the user level or repository level:
+### 2. Navigate to your project
 
-**User-level:** Edit `~/.copilot/lsp-config.json`
+```sh
+cd your-project
+```
 
-**Repository-level:** Create `.github/lsp.json` in your repository root
+### 3. Launch
 
-Example configuration:
+```sh
+cmd
+```
+
+On first launch, you'll be guided through authentication and initial taste calibration.
+
+---
+
+## Core Concepts
+
+Command Code operates in three modes:
+
+| Mode | Description | Usage |
+|------|-------------|-------|
+| **Interactive** | Conversational coding with real-time feedback | `cmd` (default) |
+| **Headless** | Non-interactive execution for CI/CD and scripts | `cmd --headless "task"` |
+| **Plan** | Structured planning before code generation | `cmd --plan` |
+
+### Models
+
+Command Code is powered by Claude frontier LLMs:
+
+- **Opus** — Maximum capability for complex, multi-step tasks
+- **Sonnet** — Balanced performance for everyday development
+- **Haiku** — Fast responses for quick edits and simple tasks
+
+Switch models with the `/model` command during an interactive session.
+
+---
+
+## Taste
+
+`taste-1` is a meta neuro-symbolic system that continuously learns your coding preferences.
+
+### How it works
+
+1. **Observation** — Every accept, reject, and edit you make is recorded as a signal
+2. **Modeling** — `taste-1` builds a symbolic representation of your coding patterns
+3. **Enforcement** — Your taste profile is applied to all generated code automatically
+
+### Sharing taste profiles
+
+```sh
+# Push your taste profile to the team
+npx taste push
+
+# Pull a team member's taste profile
+npx taste pull
+```
+
+> Rules decay. Taste compounds.
+
+---
+
+## Skills
+
+Skills are reusable slash commands that extend Command Code's capabilities.
+
+```sh
+# List available skills
+/skills
+
+# Use a skill
+/skill:deploy
+```
+
+Create custom skills as markdown files and share them with your team.
+
+---
+
+## MCP
+
+Command Code supports the [Model Context Protocol](https://modelcontextprotocol.io/) for connecting external tools and services.
+
+### Built-in MCP servers
+
+Command Code ships with GitHub's MCP server by default.
+
+### Custom MCP servers
+
+Configure additional MCP servers in your project's `.command/mcp.json`:
 
 ```json
 {
-  "lspServers": {
-    "typescript": {
-      "command": "typescript-language-server",
-      "args": ["--stdio"],
-      "fileExtensions": {
-        ".ts": "typescript",
-        ".tsx": "typescript"
-      }
+  "servers": {
+    "my-server": {
+      "command": "npx",
+      "args": ["my-mcp-server"]
     }
   }
 }
 ```
 
-Check configured LSP servers using the `/lsp` command in an interactive session.
+---
 
-For more information, see the [changelog](./changelog.md).
+## Studio
+
+Manage your Command Code environment:
+
+- **Taste profiles** — Create, edit, and switch between taste profiles
+- **API keys** — Configure authentication and model access
+- **Team organizations** — Manage team members and shared configurations
+
+---
+
+## Common Workflows
+
+### Build a new feature
+
+```sh
+cmd "add dark mode toggle to settings page"
+```
+
+### Fix a bug
+
+```sh
+cmd "fix the race condition in the auth flow"
+```
+
+### Review a PR
+
+```sh
+cmd "review PR #42"
+```
+
+### Write tests
+
+```sh
+cmd "write tests for the payment module"
+```
+
+### Refactor
+
+```sh
+cmd "refactor the database layer to use connection pooling"
+```
+
+### Pipe and automate
+
+```sh
+cat issue.md | cmd --headless
+```
+
+---
+
+## CLI Reference
+
+### `devin` entry point
+
+```sh
+devin                            # Start interactive REPL (no prompt)
+devin -- your prompt here        # Start REPL with initial prompt
+devin -p "prompt"                # Single-turn, no REPL: print response to stdout and exit
+devin -p -- prompt words here    # Same, using -- separator (still works)
+```
+
+| Flag | Description |
+|------|-------------|
+| `-p`, `--print` | Single-turn mode — print response and exit |
+| `-m`, `--model <name>` | Select model (`opus`, `sonnet`, `haiku`) |
+| `--headless` | Non-interactive mode for CI/CD and scripts |
+| `--plan` | Structured planning before code generation |
+| `-h`, `--help` | Show help message |
+| `-v`, `--version` | Show version |
+
+### `cmd` entry point
+
+```
+Usage: cmd [options] [prompt]
+
+Options:
+  --headless          Run in non-interactive mode
+  --plan              Enter plan mode
+  --banner            Show the splash banner
+  --experimental      Enable experimental features
+  --model <name>      Set the model (opus, sonnet, haiku)
+
+Slash Commands:
+  /model              Switch the active model
+  /skills             List available skills
+  /skill:<name>       Run a specific skill
+  /taste              View or edit your taste profile
+  /login              Authenticate with your account
+  /feedback           Submit feedback
+  /experimental       Toggle experimental features
+  /lsp                Check configured LSP servers
+```
+
+---
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| `command not found: cmd` | Ensure `command-code` is installed globally: `npm i -g command-code` |
+| Authentication failed | Run `/login` to re-authenticate |
+| Model not available | Check your subscription plan supports the selected model |
+| MCP server not connecting | Verify your `.command/mcp.json` configuration |
+| Taste not applying | Run `npx taste pull` to sync your latest profile |
 
 ---
 
@@ -206,9 +391,20 @@ Run `/feedback` from within the CLI to submit a confidential feedback survey.
 
 ---
 
+## Next Steps
+
+- **[Quickstart](#quickstart)** — Walk through your first real task
+- **[Common Workflows](#common-workflows)** — Real examples of what to build
+- **[CLI Reference](#cli-reference)** — Every command, flag, and configuration option
+- **[Core Concepts](#core-concepts)** — Interactive, headless, and plan modes
+
+[Explore the community on Discord &rarr;](https://discord.gg/command-code)
+
+---
+
 ## License
 
-This project is licensed under the [GitHub Copilot CLI License](LICENSE.md).
+This project is licensed under the [Command Code License](LICENSE.md).
 
 ---
 
